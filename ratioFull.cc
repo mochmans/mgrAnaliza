@@ -16,7 +16,7 @@ void configureHistogram(TH1* histo, Color_t markerColor, Style_t markerStyle, Si
     histo->SetMarkerColor(markerColor);
     histo->SetMarkerStyle(markerStyle);
     histo->SetMarkerSize(markerSize);
-    histo->GetXaxis()->SetRangeUser(0,0.4);
+    histo->GetXaxis()->SetRangeUser(0,3);
     histo->Scale(1.0);
 }
 
@@ -41,31 +41,8 @@ void normalizeHistogram(TH1F* histo, Double_t kstarLower, Double_t kstarUpper){
 int ratioFull(){
     TH1::SetDefaultSumw2();
 
-    TFile* f = new TFile("mediumDataOmegaAR.root","open");
-    TDirectory *pOmegaBar = (TDirectory*)f->Get("femto-universe-pair-task-track-cascade-extended_antyomega"); //proton antyomega
-    TDirectory *sameEventpAo = (TDirectory*)pOmegaBar->Get("SameEvent");
-    TDirectory *mixedEventpAo = (TDirectory*)pOmegaBar->Get("MixedEvent");
+    TFile* f = new TFile("mediumDataOmegaAR2.root","open");
     
-    
-
-    TH2F *hAllCentrSameEventpAo = (TH2F*)sameEventpAo->Get("relPairkstarMult");
-    TH2F *hAllCentrMixedEventpAo = (TH2F*)mixedEventpAo->Get("relPairkstarMult");
-
-    TH1D *hSameEventRatiopAo = hAllCentrSameEventpAo->ProjectionX("hSameEventRatiopAo",2,9);
-    TH1D *hMixedEventRatiopAo = hAllCentrMixedEventpAo->ProjectionX("hMixedEventRatiopAo",2,9);
-
-    TH1D *hkstarSameEventpAo0_10 = hAllCentrSameEventpAo->ProjectionX("hkstarSameEventpAo0_10",2,2);
-    TH1D *hkstarMixedEventpAo0_10 = hAllCentrMixedEventpAo->ProjectionX("hkstarMixedEventpAo0_10",2,2);
-
-    TH1D *hkstarSameEventpAo10_20 = hAllCentrSameEventpAo->ProjectionX("hkstarSameEventpAo10_20",3,3);
-    TH1D *hkstarMixedEventpAo10_20 = hAllCentrMixedEventpAo->ProjectionX("hkstarMixedEventpAo10_20",3,3);   
-    TH1D *hkstarSameEventpAo20_30 = hAllCentrSameEventpAo->ProjectionX("hkstarSameEventpAo20_30",4,4);
-    TH1D *hkstarMixedEventpAo20_30 = hAllCentrMixedEventpAo->ProjectionX("hkstarMixedEventpAo20_30",4,4);
-
-    TH1D *hkstarSameEventpAo30_50 = hAllCentrSameEventpAo->ProjectionX("hkstarSameEventpAo30_50",5,6);
-    TH1D *hkstarMixedEventpAo30_50 = hAllCentrMixedEventpAo->ProjectionX("hkstarMixedEventpAo30_50",5,6);  
-    TH1D *hkstarSameEventpAo50_100 = hAllCentrSameEventpAo->ProjectionX("hkstarSameEventpAo50_100",7,9);
-    TH1D *hkstarMixedEventpAo50_100 = hAllCentrMixedEventpAo->ProjectionX("hkstarMixedEventpAo50_100",7,9);
 
 
     TDirectory *pbarOmega = (TDirectory*)f->Get("femto-universe-pair-task-track-cascade-extended"); //antyproton omega
@@ -93,6 +70,31 @@ int ratioFull(){
 
     TH1D *hkstarSameEvent50_100 = hAllCentrSameEvent->ProjectionX("hkstarSameEvent50_80",7,9);
     TH1D *hkstarMixedEvent50_100 = hAllCentrMixedEvent->ProjectionX("hkstarMixedEvent50_80",7,9);
+
+    TDirectory *pOmegaBar = (TDirectory*)f->Get("femto-universe-pair-task-track-cascade-extended_antyomega"); //proton antyomega
+    TDirectory *sameEventpAo = (TDirectory*)pOmegaBar->Get("SameEvent");
+    TDirectory *mixedEventpAo = (TDirectory*)pOmegaBar->Get("MixedEvent");
+    
+    
+
+    TH2F *hAllCentrSameEventpAo = (TH2F*)sameEventpAo->Get("relPairkstarMult");
+    TH2F *hAllCentrMixedEventpAo = (TH2F*)mixedEventpAo->Get("relPairkstarMult");
+
+    TH1D *hSameEventRatiopAo = hAllCentrSameEventpAo->ProjectionX("hSameEventRatiopAo",2,9);
+    TH1D *hMixedEventRatiopAo = hAllCentrMixedEventpAo->ProjectionX("hMixedEventRatiopAo",2,9);
+
+    TH1D *hkstarSameEventpAo0_10 = hAllCentrSameEventpAo->ProjectionX("hkstarSameEventpAo0_10",2,2);
+    TH1D *hkstarMixedEventpAo0_10 = hAllCentrMixedEventpAo->ProjectionX("hkstarMixedEventpAo0_10",2,2);
+
+    TH1D *hkstarSameEventpAo10_20 = hAllCentrSameEventpAo->ProjectionX("hkstarSameEventpAo10_20",3,3);
+    TH1D *hkstarMixedEventpAo10_20 = hAllCentrMixedEventpAo->ProjectionX("hkstarMixedEventpAo10_20",3,3);   
+    TH1D *hkstarSameEventpAo20_30 = hAllCentrSameEventpAo->ProjectionX("hkstarSameEventpAo20_30",4,4);
+    TH1D *hkstarMixedEventpAo20_30 = hAllCentrMixedEventpAo->ProjectionX("hkstarMixedEventpAo20_30",4,4);
+
+    TH1D *hkstarSameEventpAo30_50 = hAllCentrSameEventpAo->ProjectionX("hkstarSameEventpAo30_50",5,6);
+    TH1D *hkstarMixedEventpAo30_50 = hAllCentrMixedEventpAo->ProjectionX("hkstarMixedEventpAo30_50",5,6);  
+    TH1D *hkstarSameEventpAo50_100 = hAllCentrSameEventpAo->ProjectionX("hkstarSameEventpAo50_100",7,9);
+    TH1D *hkstarMixedEventpAo50_100 = hAllCentrMixedEventpAo->ProjectionX("hkstarMixedEventpAo50_100",7,9);
 
 
 
@@ -124,7 +126,7 @@ int ratioFull(){
     TH1F* hCF50_100pAo = createCFHistogram((TH1F*)hkstarSameEventpAo50_100, (TH1F*)hkstarMixedEventpAo50_100, "hCF50_100p");
      
 
-    Int_t rebinF = 4;
+    Int_t rebinF = 3;
     hCFall->Rebin(rebinF);
     hCF0_10->Rebin(rebinF);
     hCF10_20->Rebin(rebinF);
