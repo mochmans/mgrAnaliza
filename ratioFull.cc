@@ -12,6 +12,7 @@
 #include "TFitResult.h"
 #include "TLegend.h"
 #include "TDirectory.h"
+#include "backgroundCorrelation.cc"
 
 void configureHistogram(TH1* histo, Color_t markerColor, Style_t markerStyle, Size_t markerSize){
     histo->SetMarkerColor(markerColor);
@@ -19,14 +20,6 @@ void configureHistogram(TH1* histo, Color_t markerColor, Style_t markerStyle, Si
     histo->SetMarkerSize(markerSize);
     histo->GetXaxis()->SetRangeUser(0,1.5);
     histo->Scale(1.0);
-}
-
-TH1F *createCFHistogram(TH1F* hNumerator, TH1F* hDenominator, const char* name, Int_t rebinFactor=1){
-    // hNumerator->Rebin(rebinFactor);
-    // hDenominator->Rebin(rebinFactor);
-    TH1F *hCF = (TH1F*)hNumerator->Clone(name);
-    hCF->Divide(hDenominator);
-    return hCF;
 }
 
 void normalizeHistogram(TH1F* histo, Double_t kstarLower, Double_t kstarUpper){
@@ -102,31 +95,6 @@ int ratioFull(){
 
     Int_t rebinFactor = 3;
 
-    hkstarMixedEvent0_10->Rebin(rebinFactor);
-    hkstarMixedEvent10_20->Rebin(rebinFactor);
-    hkstarMixedEvent20_30->Rebin(rebinFactor);
-    hkstarMixedEvent30_50->Rebin(rebinFactor);
-    hkstarMixedEvent50_100->Rebin(rebinFactor);
-    hMixedEventRatio->Rebin(rebinFactor);
-    hkstarMixedEventpAo0_10->Rebin(rebinFactor);
-    hkstarMixedEventpAo10_20->Rebin(rebinFactor);
-    hkstarMixedEventpAo20_30->Rebin(rebinFactor);
-    hkstarMixedEventpAo30_50->Rebin(rebinFactor);
-    hkstarMixedEventpAo50_100->Rebin(rebinFactor);
-    hMixedEventRatiopAo->Rebin(rebinFactor);
-    hSameEventRatio->Rebin(rebinFactor);
-    hkstarSameEvent0_10->Rebin(rebinFactor);
-    hkstarSameEvent10_20->Rebin(rebinFactor);
-    hkstarSameEvent20_30->Rebin(rebinFactor);
-    hkstarSameEvent30_50->Rebin(rebinFactor);
-    hkstarSameEvent50_100->Rebin(rebinFactor);
-    hkstarSameEventpAo0_10->Rebin(rebinFactor);
-    hkstarSameEventpAo10_20->Rebin(rebinFactor);
-    hkstarSameEventpAo20_30->Rebin(rebinFactor);
-    hkstarSameEventpAo30_50->Rebin(rebinFactor);
-    hkstarSameEventpAo50_100->Rebin(rebinFactor);
-    hSameEventRatiopAo->Rebin(rebinFactor);
-   
     TH1F* hCFall = createCFHistogram((TH1F*)hSameEventRatio, (TH1F*)hMixedEventRatio, "hCFunpbar", rebinFactor);   //antyproton omega
     
     TH1F* hCF0_10 = createCFHistogram((TH1F*)hkstarSameEvent0_10, (TH1F*)hkstarMixedEvent0_10, "hCF0_10pbar", rebinFactor);
