@@ -14,6 +14,8 @@
 #include "TDirectory.h"
 #include "backgroundCorrelation.cc"
 
+
+
 void configureHistogram(TH1* histo, Color_t markerColor, Style_t markerStyle, Size_t markerSize){
     histo->SetMarkerColor(markerColor);
     histo->SetMarkerStyle(markerStyle);
@@ -26,8 +28,10 @@ void configureHistogram(TH1* histo, Color_t markerColor, Style_t markerStyle, Si
 
 int ratioFull(){
     TH1::SetDefaultSumw2();
-
-    TFile* f = new TFile("mediumDataOmegaARfull.root","open");
+    // TString rootFileName = "mediumDataOmegaARfull.root";
+    TString rootFileName = "zzo_medium.root";
+    TFile* f = new TFile(rootFileName,"open");
+    // TFile* fFit = new TFile("mediumDataOmegaARWide.root","open");
 
     Int_t rebinFactor = 1;
     
@@ -41,6 +45,8 @@ int ratioFull(){
 
     std::vector<TH1F*> omegaCorFuncs = correlationFunctions(f,"femto-universe-pair-task-track-cascade-extended",rebinFactor);
     std::vector<TH1F*> antiOmegaCorFuncs = correlationFunctions(f,"femto-universe-pair-task-track-cascade-extended_antyomega",rebinFactor);
+
+    
 
     
     
@@ -129,6 +135,20 @@ int ratioFull(){
     legend3->AddEntry(antiOmegaCorFuncs[0],"proton-antiomega","p");
     c5->cd(1);
     legend3->Draw();
+
+    TString resultsFileName = rootFileName.ReplaceAll(".root","_correlationResultsFull.root");
+
+    SaveCorrelationHistograms(
+        resultsFileName,
+        omegaCorFuncs,
+        antiOmegaCorFuncs
+        // ,backgroundOmegaSum,
+        // backgroundAntiOmegaSum,
+        // backgroundHighOmega,
+        // backgroundHighAntiOmega,
+        // backgroundLowOmega,
+        // backgroundLowAntiOmega
+    );
      
     return 0; 
 }
