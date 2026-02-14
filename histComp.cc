@@ -12,7 +12,7 @@
 #include <TRandom.h>
 #include "TLegend.h"
 #include "TDirectory.h"
-#include "cfHistRead.cc"
+#include "histRead.cc"
 
 void configureHistogram(TH1* histo, Color_t markerColor, Style_t markerStyle, Size_t markerSize){
     histo->SetMarkerColor(markerColor);
@@ -30,6 +30,7 @@ int histComp(){
     HistogramGroups zzhHists = loadCorrelationHistograms("zzh_medium_correlationResultsFull.root");
     HistogramGroups zzoHists = loadCorrelationHistograms("zzo_medium_correlationResultsFull.root");
     HistogramGroups zzmHists = loadCorrelationHistograms("zzm_medium_correlationResultsFull.root");
+    HistogramGroups ARhists = loadCorrelationHistograms("mediumDataOmegaARfull_correlationResultsFull.root");
 
     double_t markerSize = 0.7;
 
@@ -40,18 +41,21 @@ int histComp(){
             configureHistogram(zzhHists.omegaCor[i], kBlue, kFullCircle, markerSize );
             configureHistogram(zzoHists.omegaCor[i], kRed, kFullSquare, markerSize );
             configureHistogram(zzmHists.omegaCor[i], kGreen, kFullDiamond, markerSize );
+            configureHistogram(ARhists.omegaCor[i], kBlack, kFullCircle, markerSize );
             c1->cd(i+1);
             zzhHists.omegaCor[i]->GetXaxis()->SetRangeUser(0,0.5);
             zzhHists.omegaCor[i]->GetYaxis()->SetRangeUser(0.0,2.5);
             zzhHists.omegaCor[i]->Draw();
             zzoHists.omegaCor[i]->Draw("SAME");
             zzmHists.omegaCor[i]->Draw("SAME");
+            ARhists.omegaCor[i]->Draw("SAME");
         }
         c1->cd(1);
         TLegend *l1 = new TLegend();
             l1->AddEntry(zzhHists.omegaCor[0],"ZZH","p");
             l1->AddEntry(zzoHists.omegaCor[0],"ZZO","p");
             l1->AddEntry(zzmHists.omegaCor[0],"ZZM","p");
+            l1->AddEntry(ARhists.omegaCor[0],"Data","p");
             l1->Draw();
     }
 
@@ -61,6 +65,7 @@ int histComp(){
         for(Int_t i = 0; i<6; i++){
             configureHistogram(zzhHists.antiOmegaCor[i], kBlue, kFullCircle, markerSize );
             configureHistogram(zzoHists.antiOmegaCor[i], kRed, kFullSquare, markerSize );
+            configureHistogram(ARhists.antiOmegaCor[i], kBlack, kFullCircle, markerSize );
             configureHistogram(zzmHists.antiOmegaCor[i], kGreen, kFullTriangleUp, markerSize );
             c2->cd(i+1);
             zzhHists.antiOmegaCor[i]->GetXaxis()->SetRangeUser(0,0.5);
@@ -68,12 +73,14 @@ int histComp(){
             zzhHists.antiOmegaCor[i]->Draw();
             zzoHists.antiOmegaCor[i]->Draw("SAME");
             zzmHists.antiOmegaCor[i]->Draw("SAME");
+            ARhists.antiOmegaCor[i]->Draw("SAME");
         }
         c2->cd(1);
         TLegend *l2 = new TLegend();
             l2->AddEntry(zzhHists.antiOmegaCor[0],"ZZH","p");
             l2->AddEntry(zzoHists.antiOmegaCor[0],"ZZO","p");
             l2->AddEntry(zzmHists.antiOmegaCor[0],"ZZM","p");
+            l2->AddEntry(ARhists.antiOmegaCor[0],"Data","p");
             l2->Draw();
     }
     
@@ -84,18 +91,21 @@ int histComp(){
             configureHistogram(zzhHists.backgroundOmegaSum[i], kBlue, kFullCircle, markerSize );
             configureHistogram(zzoHists.backgroundOmegaSum[i], kRed, kFullSquare, markerSize );
             configureHistogram(zzmHists.backgroundOmegaSum[i], kGreen, kFullTriangleUp, markerSize );
+            configureHistogram(ARhists.backgroundOmegaSum[i], kBlack, kFullCircle, markerSize );
             c3->cd(i+1);
             zzhHists.backgroundOmegaSum[i]->GetXaxis()->SetRangeUser(0,0.5);
             zzhHists.backgroundOmegaSum[i]->GetYaxis()->SetRangeUser(0.0,2.5);
             zzhHists.backgroundOmegaSum[i]->Draw();
             zzoHists.backgroundOmegaSum[i]->Draw("SAME");
             zzmHists.backgroundOmegaSum[i]->Draw("SAME");
+            ARhists.backgroundOmegaSum[i]->Draw("SAME");
         }
         c3->cd(1);
         TLegend *l3 = new TLegend();
             l3->AddEntry(zzhHists.backgroundOmegaSum[0],"ZZH","p");
             l3->AddEntry(zzoHists.backgroundOmegaSum[0],"ZZO","p");
             l3->AddEntry(zzmHists.backgroundOmegaSum[0],"ZZM","p");
+            l3->AddEntry(ARhists.backgroundOmegaSum[0],"Data","p");
             l3->Draw(); 
     }
 
@@ -106,12 +116,14 @@ int histComp(){
         configureHistogram(zzhHists.backgroundHighOmega[i], kBlue, kFullCircle, markerSize );
         configureHistogram(zzoHists.backgroundHighOmega[i], kRed, kFullSquare, markerSize );
         configureHistogram(zzmHists.backgroundHighOmega[i], kGreen, kFullTriangleUp, markerSize );
+        configureHistogram(ARhists.backgroundHighOmega[i], kBlack, kFullCircle, markerSize );
         c4->cd(i+1);
         zzhHists.backgroundHighOmega[i]->GetXaxis()->SetRangeUser(0,0.5);
         zzhHists.backgroundHighOmega[i]->GetYaxis()->SetRangeUser(0.0,2.5);
         zzhHists.backgroundHighOmega[i]->Draw();
         zzoHists.backgroundHighOmega[i]->Draw("SAME");
         zzmHists.backgroundHighOmega[i]->Draw("SAME");
+        ARhists.backgroundHighOmega[i]->Draw("SAME");
     }
     c4->cd(1);
     TLegend *l4 = new TLegend();
@@ -128,18 +140,21 @@ int histComp(){
         configureHistogram(zzhHists.backgroundLowOmega[i], kBlue, kFullCircle   , markerSize );
         configureHistogram(zzoHists.backgroundLowOmega[i], kRed, kFullSquare, markerSize );
         configureHistogram(zzmHists.backgroundLowOmega[i], kGreen, kFullTriangleUp, markerSize );
+        configureHistogram(ARhists.backgroundLowOmega[i], kBlack, kFullCircle, markerSize );
         c5->cd(i+1);
         zzhHists.backgroundLowOmega[i]->GetXaxis()->SetRangeUser(0,0.5);
         zzhHists.backgroundLowOmega[i]->GetYaxis()->SetRangeUser(0.0,2.5);
         zzhHists.backgroundLowOmega[i]->Draw();
         zzoHists.backgroundLowOmega[i]->Draw("SAME");
         zzmHists.backgroundLowOmega[i]->Draw("SAME");
+        ARhists.backgroundLowOmega[i]->Draw("SAME");
     }
     c5->cd(1);
     TLegend *l5 = new TLegend();
         l5->AddEntry(zzhHists.backgroundLowOmega[0],"ZZH","p");
         l5->AddEntry(zzoHists.backgroundLowOmega[0],"ZZO","p");
         l5->AddEntry(zzmHists.backgroundLowOmega[0],"ZZM","p");
+        l5->AddEntry(ARhists.backgroundLowOmega[0],"Data","p");
         l5->Draw(); 
     }      
     
@@ -150,18 +165,21 @@ int histComp(){
         configureHistogram(zzhHists.backgroundAntiOmegaSum[i], kBlue, kFullCircle, markerSize );
         configureHistogram(zzoHists.backgroundAntiOmegaSum[i], kRed, kFullSquare, markerSize );
         configureHistogram(zzmHists.backgroundAntiOmegaSum[i], kGreen, kFullTriangleUp, markerSize );
+        configureHistogram(ARhists.backgroundAntiOmegaSum[i], kBlack, kFullCircle, markerSize );
         c6->cd(i+1);
         zzhHists.backgroundAntiOmegaSum[i]->GetXaxis()->SetRangeUser(0,0.5);
         zzhHists.backgroundAntiOmegaSum[i]->GetYaxis()->SetRangeUser(0.0,2.5);
         zzhHists.backgroundAntiOmegaSum[i]->Draw();
         zzoHists.backgroundAntiOmegaSum[i]->Draw("SAME");
         zzmHists.backgroundAntiOmegaSum[i]->Draw("SAME");   
+        ARhists.backgroundAntiOmegaSum[i]->Draw("SAME");
     }
     c6->cd(1);
     TLegend *l6 = new TLegend();    
         l6->AddEntry(zzhHists.backgroundAntiOmegaSum[0],"ZZH","p");
         l6->AddEntry(zzoHists.backgroundAntiOmegaSum[0],"ZZO","p");
         l6->AddEntry(zzmHists.backgroundAntiOmegaSum[0],"ZZM","p");
+        l6->AddEntry(ARhists.backgroundAntiOmegaSum[0],"Data","p");
         l6->Draw(); 
     }
 
@@ -172,18 +190,21 @@ int histComp(){
         configureHistogram(zzhHists.backgroundHighAntiOmega[i], kBlue, kFullCircle, markerSize );
         configureHistogram(zzoHists.backgroundHighAntiOmega[i], kRed, kFullSquare, markerSize );
         configureHistogram(zzmHists.backgroundHighAntiOmega[i], kGreen, kFullTriangleUp, markerSize );
+        configureHistogram(ARhists.backgroundHighAntiOmega[i], kBlack, kFullCircle, markerSize );
         c7->cd(i+1);
         zzhHists.backgroundHighAntiOmega[i]->GetXaxis()->SetRangeUser(0,0.5);
         zzhHists.backgroundHighAntiOmega[i]->GetYaxis()->SetRangeUser(0.0,2.5);
         zzhHists.backgroundHighAntiOmega[i]->Draw();
         zzoHists.backgroundHighAntiOmega[i]->Draw("SAME");
         zzmHists.backgroundHighAntiOmega[i]->Draw("SAME");
+        ARhists.backgroundHighAntiOmega[i]->Draw("SAME");
     }
     c7->cd(1);
     TLegend *l7 = new TLegend();
         l7->AddEntry(zzhHists.backgroundHighAntiOmega[0],"ZZH","p");
         l7->AddEntry(zzoHists.backgroundHighAntiOmega[0],"ZZO","p");
         l7->AddEntry(zzmHists.backgroundHighAntiOmega[0],"ZZM","p");
+        l7->AddEntry(ARhists.backgroundHighAntiOmega[0],"Data","p");
         l7->Draw(); 
     }
     
@@ -194,18 +215,21 @@ int histComp(){
         configureHistogram(zzhHists.backgroundLowAntiOmega[i], kBlue, kFullCircle, markerSize );
         configureHistogram(zzoHists.backgroundLowAntiOmega[i], kRed, kFullSquare, markerSize );
         configureHistogram(zzmHists.backgroundLowAntiOmega[i], kGreen, kFullTriangleUp, markerSize );
+        configureHistogram(ARhists.backgroundLowAntiOmega[i], kBlack, kFullCircle, markerSize );
         c8->cd(i+1);
         zzhHists.backgroundLowAntiOmega[i]->GetXaxis()->SetRangeUser(0,0.5);
         zzhHists.backgroundLowAntiOmega[i]->GetYaxis()->SetRangeUser(0.0,2.5);
         zzhHists.backgroundLowAntiOmega[i]->Draw();
         zzoHists.backgroundLowAntiOmega[i]->Draw("SAME");
         zzmHists.backgroundLowAntiOmega[i]->Draw("SAME");
+        ARhists.backgroundLowAntiOmega[i]->Draw("SAME");
     }
     c8->cd(1);
     TLegend *l8 = new TLegend();
         l8->AddEntry(zzhHists.backgroundLowAntiOmega[0],"ZZH","p");
         l8->AddEntry(zzoHists.backgroundLowAntiOmega[0],"ZZO","p");
         l8->AddEntry(zzmHists.backgroundLowAntiOmega[0],"ZZM","p");
+        l8->AddEntry(ARhists.backgroundLowAntiOmega[0],"Data","p");
         l8->Draw(); 
     }
     

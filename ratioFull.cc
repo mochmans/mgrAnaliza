@@ -13,23 +13,17 @@
 #include "TLegend.h"
 #include "TDirectory.h"
 #include "backgroundCorrelation.cc"
+#include "histSave.cc"
 
 
 
-void configureHistogram(TH1* histo, Color_t markerColor, Style_t markerStyle, Size_t markerSize){
-    histo->SetMarkerColor(markerColor);
-    histo->SetMarkerStyle(markerStyle);
-    histo->SetMarkerSize(markerSize);
-    histo->GetXaxis()->SetRangeUser(0,1.5);
-    histo->Scale(1.0);
-}
 
 
 
 int ratioFull(){
     TH1::SetDefaultSumw2();
-    // TString rootFileName = "mediumDataOmegaARfull.root";
-    TString rootFileName = "zzo_medium.root";
+    TString rootFileName = "mediumDataOmegaARfull.root";
+    // TString rootFileName = "zzm_medium.root";
     TFile* f = new TFile(rootFileName,"open");
     // TFile* fFit = new TFile("mediumDataOmegaARWide.root","open");
 
@@ -142,12 +136,12 @@ int ratioFull(){
         resultsFileName,
         omegaCorFuncs,
         antiOmegaCorFuncs
-        // ,backgroundOmegaSum,
-        // backgroundAntiOmegaSum,
-        // backgroundHighOmega,
-        // backgroundHighAntiOmega,
-        // backgroundLowOmega,
-        // backgroundLowAntiOmega
+        ,backgroundOmegaSum,
+        backgroundAntiOmegaSum,
+        backgroundHighOmega,
+        backgroundHighAntiOmega,
+        backgroundLowOmega,
+        backgroundLowAntiOmega
     );
      
     return 0; 

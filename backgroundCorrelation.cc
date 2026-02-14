@@ -17,6 +17,15 @@
 TString highBackgroundDir = "bkg_high";
 TString lowBackgroundDir = "bkg_low";
 
+void configureHistogram(TH1* histo, Color_t markerColor, Style_t markerStyle, Size_t markerSize){
+    histo->SetMarkerColor(markerColor);
+    histo->SetMarkerStyle(markerStyle);
+    histo->SetMarkerSize(markerSize);
+    histo->GetXaxis()->SetRangeUser(0,1.5);
+    histo->Scale(1.0);
+}
+
+
 void normalizeHistogram(TH1F* histo, Double_t kstarLower=0.5, Double_t kstarUpper=1.5){
     Int_t binLow = histo->GetXaxis()->FindBin(kstarLower);
     Int_t binUp = histo->GetXaxis()->FindBin(kstarUpper);
@@ -38,74 +47,55 @@ TH1F *createCFHistogram(TH1F* hNumerator, TH1F* hDenominator, const char* name, 
     return hCF;
 }
 
-void SaveCorrelationHistograms(
-    const char* outFileName,
-    const std::vector<TH1F*>& omegaCor,                     //required
-    const std::vector<TH1F*>& antiOmegaCor,                  //required
-    const std::vector<TH1F*>& backgroundOmegaSum = {},       // optional
-    const std::vector<TH1F*>& backgroundAntiOmegaSum = {},   // optional
-    const std::vector<TH1F*>& backgroundHighOmega = {},      // optional
-    const std::vector<TH1F*>& backgroundHighAntiOmega = {},  // optional
-    const std::vector<TH1F*>& backgroundLowOmega = {},       // optional
-    const std::vector<TH1F*>& backgroundLowAntiOmega = {}    // optional
-) {
-    TFile out(outFileName, "RECREATE");
 
+std::vector<TH1F*> kstarDists(TFile* filename, TString directoryName){
+    TFile* f = filename;
+    
+    TH1::SetDefaultSumw2();
 
-    auto writeVector = [](const std::vector<TH1F*>& vec, const char* prefix) {
-        for (size_t i = 0; i < vec.size(); ++i) {
-            TH1F* h = vec[i];
-            if (!h) continue;
-            TH1F* cloneH = (TH1F*)h->Clone(Form("%s_%zu", prefix, i));
-            cloneH->SetDirectory(gDirectory);
-            cloneH->Write();
-            delete cloneH;
-        }
-    };
+    TDirectory *Dir = (TDirectory*)f->Get(directoryName);
 
-    // ========== correlation ==========
-    out.mkdir("correlation");
-    out.cd("correlation");
-    writeVector(omegaCor, "omegaCor");
-    writeVector(antiOmegaCor, "antiOmegaCor");
+    TDirectory *sameEvent = (TDirectory*)Dir->Get("SameEvent");
+    TDirectory *mixedEvent = (TDirectory*)Dir->Get("MixedEvent");
 
-    // ========== background: sum ==========
-    if (!backgroundOmegaSum.empty() || !backgroundAntiOmegaSum.empty()) {
-        out.cd(); // root
-        out.mkdir("background");
-        out.cd("background");
-        out.mkdir("sum");
-        out.cd("background/sum");
-        writeVector(backgroundOmegaSum, "backgroundOmegaSum");
-        writeVector(backgroundAntiOmegaSum, "backgroundAntiOmegaSum");
-    }
+    TH2F *hAllCentrSameEvent = (TH2F*)sameEvent->Get("relPairkstarMult");
+    TH2F *hAllCentrMixedEvent = (TH2F*)mixedEvent->Get("relPairkstarMult");
 
-    // ========== background: high ==========
-    if (!backgroundHighOmega.empty() || !backgroundHighAntiOmega.empty()) {
-        out.cd(); // root
-        // upewnij sie, ze katalog background istnieje
-        out.cd();
-        out.cd("background");
-        out.mkdir("high");
-        out.cd("background/high");
-        writeVector(backgroundHighOmega, "backgroundHighOmega");
-        writeVector(backgroundHighAntiOmega, "backgroundHighAntiOmega");
-    }
+    TH1D *hSameEventRatio = hAllCentrSameEvent->ProjectionX("hSameEventRatio",2,9);
+    TH1D *hMixedEventRatio = hAllCentrMixedEvent->ProjectionX("hMixedEventRatio",2,9);
 
-    // ========== background: low ==========
-    if (!backgroundLowOmega.empty() || !backgroundLowAntiOmega.empty()) {
-        out.cd(); // root
-        out.cd("background");
-        out.mkdir("low");
-        out.cd("background/low");
-        writeVector(backgroundLowOmega, "backgroundLowOmega");
-        writeVector(backgroundLowAntiOmega, "backgroundLowAntiOmega");
-    }
+    TH1D *hkstarSameEvent0_10 = hAllCentrSameEvent->ProjectionX("hkstarSameEvent0_10",2,2);
+    TH1D *hkstarMixedEvent0_10 = hAllCentrMixedEvent->ProjectionX("hkstarMixedEvent0_10",2,2);
 
-    out.Close();
-    std::cout << "Zapisano histogramy do pliku: " << outFileName << std::endl;
+    TH1D *hkstarSameEvent10_20 = hAllCentrSameEvent->ProjectionX("hkstarSameEvent10_20",3,3);
+    TH1D *hkstarMixedEvent10_20 = hAllCentrMixedEvent->ProjectionX("hkstarMixedEvent10_20",3,3);
+
+    TH1D *hkstarSameEvent20_30 = hAllCentrSameEvent->ProjectionX("hkstarSameEvent20_30",4,4);
+    TH1D *hkstarMixedEvent20_30 = hAllCentrMixedEvent->ProjectionX("hkstarMixedEvent20_30",4,4);
+
+    TH1D *hkstarSameEvent30_50 = hAllCentrSameEvent->ProjectionX("hkstarSameEvent30_50",5,6);
+    TH1D *hkstarMixedEvent30_50 = hAllCentrMixedEvent->ProjectionX("hkstarMixedEvent30_50",5,6);
+
+    TH1D *hkstarSameEvent50_100 = hAllCentrSameEvent->ProjectionX("hkstarSameEvent50_80",7,9);
+    TH1D *hkstarMixedEvent50_100 = hAllCentrMixedEvent->ProjectionX("hkstarMixedEvent50_80",7,9);
+
+    std::vector<TH1F*> results;
+    results.push_back((TH1F*)hSameEventRatio);
+    results.push_back((TH1F*)hMixedEventRatio);
+    results.push_back((TH1F*)hkstarSameEvent0_10);
+    results.push_back((TH1F*)hkstarMixedEvent0_10);
+    results.push_back((TH1F*)hkstarSameEvent10_20);
+    results.push_back((TH1F*)hkstarMixedEvent10_20);
+    results.push_back((TH1F*)hkstarSameEvent20_30);
+    results.push_back((TH1F*)hkstarMixedEvent20_30);
+    results.push_back((TH1F*)hkstarSameEvent30_50);
+    results.push_back((TH1F*)hkstarMixedEvent30_50);
+    results.push_back((TH1F*)hkstarSameEvent50_100);
+    results.push_back((TH1F*)hkstarMixedEvent50_100);
+
+    
+    return results;
 }
-
 
 std::vector<TH1F*> correlationFunctions(TFile* filename, TString directoryName, Int_t rebinFactor=1){
     
@@ -246,7 +236,7 @@ std::vector<TH1F*> backgroundCorrelationSum(TFile* filename, TString directoryNa
     return results;
 }
 
-std::vector<TH1F*> kstarDistributions(TFile* filename, TString directoryName, Int_t rebinFactor=1){
+std::vector<TH1F*> kstarDistributions(TFile* filename, TString directoryName){
     
     TFile* f = filename;
     
@@ -279,6 +269,20 @@ std::vector<TH1F*> kstarDistributions(TFile* filename, TString directoryName, In
     TH1D *hkstarMixedEvent50_100 = hAllCentrMixedEvent->ProjectionX("hkstarMixedEvent50_80",7,9);
 
     std::vector<TH1F*> results;
+
+    hSameEventRatio->SetDirectory(0);
+    hMixedEventRatio->SetDirectory(0);
+    hkstarSameEvent0_10->SetDirectory(0);
+    hkstarMixedEvent0_10->SetDirectory(0);
+    hkstarSameEvent10_20->SetDirectory(0);
+    hkstarMixedEvent10_20->SetDirectory(0);
+    hkstarSameEvent20_30->SetDirectory(0);
+    hkstarMixedEvent20_30->SetDirectory(0);
+    hkstarSameEvent30_50->SetDirectory(0);
+    hkstarMixedEvent30_50->SetDirectory(0);
+    hkstarSameEvent50_100->SetDirectory(0);
+    hkstarMixedEvent50_100->SetDirectory(0);
+
     results.push_back((TH1F*)hSameEventRatio);
     results.push_back((TH1F*)hMixedEventRatio);
     results.push_back((TH1F*)hkstarSameEvent0_10);
@@ -291,6 +295,98 @@ std::vector<TH1F*> kstarDistributions(TFile* filename, TString directoryName, In
     results.push_back((TH1F*)hkstarMixedEvent30_50);
     results.push_back((TH1F*)hkstarSameEvent50_100);
     results.push_back((TH1F*)hkstarMixedEvent50_100);
+    return results;
+}
+
+std::vector<TH1F*> kstarDistributionsSum(TFile* filename, TString directoryNameLow, TString directoryNameHigh){
+    
+    TFile* f = filename;
+    
+    TH1::SetDefaultSumw2();
+
+    TDirectory *DirLow = (TDirectory*)f->Get(directoryNameLow);
+    TDirectory *DirHigh = (TDirectory*)f->Get(directoryNameHigh);
+
+    TDirectory *sameEventLow = (TDirectory*)DirLow->Get("SameEvent");
+    TDirectory *mixedEventLow = (TDirectory*)DirLow->Get("MixedEvent");
+    TDirectory *sameEventHigh = (TDirectory*)DirHigh->Get("SameEvent");
+    TDirectory *mixedEventHigh = (TDirectory*)DirHigh->Get("MixedEvent");
+
+    TH2F *hAllCentrSameEventLow = (TH2F*)sameEventLow->Get("relPairkstarMult");
+    TH2F *hAllCentrMixedEventLow = (TH2F*)mixedEventLow->Get("relPairkstarMult");
+    TH2F *hAllCentrSameEventHigh = (TH2F*)sameEventHigh->Get("relPairkstarMult");
+    TH2F *hAllCentrMixedEventHigh = (TH2F*)mixedEventHigh->Get("relPairkstarMult");
+
+
+    TH1D *hSameEventRatioLow = hAllCentrSameEventLow->ProjectionX("hSameEventRatioLow",2,9);
+    TH1D *hMixedEventRatioLow = hAllCentrMixedEventLow->ProjectionX("hMixedEventRatioLow",2,9);
+
+    TH1D *hkstarSameEventLow0_10 = hAllCentrSameEventLow->ProjectionX("hkstarSameEventLow0_10",2,2);
+    TH1D *hkstarMixedEventLow0_10 = hAllCentrMixedEventLow->ProjectionX("hkstarMixedEventLow0_10",2,2);   
+    TH1D *hkstarSameEventLow10_20 = hAllCentrSameEventLow->ProjectionX("hkstarSameEventLow10_20",3,3);
+    TH1D *hkstarMixedEventLow10_20 = hAllCentrMixedEventLow->ProjectionX("hkstarMixedEventLow10_20",3,3);
+
+    TH1D *hkstarSameEventLow20_30 = hAllCentrSameEventLow->ProjectionX("hkstarSameEventLow20_30",4,4);
+    TH1D *hkstarMixedEventLow20_30 = hAllCentrMixedEventLow->ProjectionX("hkstarMixedEventLow20_30",4,4);
+
+    TH1D *hkstarSameEventLow30_50 = hAllCentrSameEventLow->ProjectionX("hkstarSameEventLow30_50",5,6);
+    TH1D *hkstarMixedEventLow30_50 = hAllCentrMixedEventLow->ProjectionX("hkstarMixedEventLow30_50",5,6);
+
+    TH1D *hkstarSameEventLow50_100 = hAllCentrSameEventLow->ProjectionX("hkstarSameEventLow50_100",7,9);
+    TH1D *hkstarMixedEventLow50_100 = hAllCentrMixedEventLow->ProjectionX("hkstarMixedEventLow50_100",7,9);
+
+    TH1D *hSameEventRatioHigh = hAllCentrSameEventHigh->ProjectionX("hSameEventRatioHigh",2,9);
+    TH1D *hMixedEventRatioHigh = hAllCentrMixedEventHigh->ProjectionX("hMixedEventRatioHigh",2,9);  
+    TH1D *hkstarSameEventHigh0_10 = hAllCentrSameEventHigh->ProjectionX("hkstarSameEventHigh0_10",2,2);
+    TH1D *hkstarMixedEventHigh0_10 = hAllCentrMixedEventHigh->ProjectionX("hkstarMixedEventHigh0_10",2,2);
+    TH1D *hkstarSameEventHigh10_20 = hAllCentrSameEventHigh->ProjectionX("hkstarSameEventHigh10_20",3,3);
+    TH1D *hkstarMixedEventHigh10_20 = hAllCentrMixedEventHigh->ProjectionX("hkstarMixedEventHigh10_20",3,3);
+    TH1D *hkstarSameEventHigh20_30 = hAllCentrSameEventHigh->ProjectionX("hkstarSameEventHigh20_30",4,4);
+    TH1D *hkstarMixedEventHigh20_30 = hAllCentrMixedEventHigh->ProjectionX("hkstarMixedEventHigh20_30",4,4);
+    TH1D *hkstarSameEventHigh30_50 = hAllCentrSameEventHigh->ProjectionX("hkstarSameEventHigh30_50",5,6);
+    TH1D *hkstarMixedEventHigh30_50 = hAllCentrMixedEventHigh->ProjectionX("hkstarMixedEventHigh30_50",5,6);
+    TH1D *hkstarSameEventHigh50_100 = hAllCentrSameEventHigh->ProjectionX("hkstarSameEventHigh50_100",7,9);
+    TH1D *hkstarMixedEventHigh50_100 = hAllCentrMixedEventHigh->ProjectionX("hkstarMixedEventHigh50_100",7,9);
+
+    hSameEventRatioLow->Add(hSameEventRatioHigh);
+    hMixedEventRatioLow->Add(hMixedEventRatioHigh);
+    hkstarSameEventLow0_10->Add(hkstarSameEventHigh0_10);
+    hkstarMixedEventLow0_10->Add(hkstarMixedEventHigh0_10);
+    hkstarSameEventLow10_20->Add(hkstarSameEventHigh10_20);
+    hkstarMixedEventLow10_20->Add(hkstarMixedEventHigh10_20);
+    hkstarSameEventLow20_30->Add(hkstarSameEventHigh20_30);
+    hkstarMixedEventLow20_30->Add(hkstarMixedEventHigh20_30);
+    hkstarSameEventLow30_50->Add(hkstarSameEventHigh30_50);
+    hkstarMixedEventLow30_50->Add(hkstarMixedEventHigh30_50);
+    hkstarSameEventLow50_100->Add(hkstarSameEventHigh50_100);
+    hkstarMixedEventLow50_100->Add(hkstarMixedEventHigh50_100);
+
+    std::vector<TH1F*> results;
+    hSameEventRatioLow->SetDirectory(0);
+    hMixedEventRatioLow->SetDirectory(0);
+    hkstarSameEventLow0_10->SetDirectory(0);
+    hkstarMixedEventLow0_10->SetDirectory(0);
+    hkstarSameEventLow10_20->SetDirectory(0);
+    hkstarMixedEventLow10_20->SetDirectory(0);
+    hkstarSameEventLow20_30->SetDirectory(0);
+    hkstarMixedEventLow20_30->SetDirectory(0);
+    hkstarSameEventLow30_50->SetDirectory(0);
+    hkstarMixedEventLow30_50->SetDirectory(0);
+    hkstarSameEventLow50_100->SetDirectory(0);
+    hkstarMixedEventLow50_100->SetDirectory(0);
+
+    results.push_back((TH1F*)hSameEventRatioLow);
+    results.push_back((TH1F*)hMixedEventRatioLow);
+    results.push_back((TH1F*)hkstarSameEventLow0_10);
+    results.push_back((TH1F*)hkstarMixedEventLow0_10);
+    results.push_back((TH1F*)hkstarSameEventLow10_20);
+    results.push_back((TH1F*)hkstarMixedEventLow10_20);
+    results.push_back((TH1F*)hkstarSameEventLow20_30);
+    results.push_back((TH1F*)hkstarMixedEventLow20_30);
+    results.push_back((TH1F*)hkstarSameEventLow30_50);
+    results.push_back((TH1F*)hkstarMixedEventLow30_50);
+    results.push_back((TH1F*)hkstarSameEventLow50_100);
+    results.push_back((TH1F*)hkstarMixedEventLow50_100);
     return results;
 }
 
