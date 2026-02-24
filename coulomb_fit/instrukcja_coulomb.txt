@@ -1,0 +1,30 @@
+Calculating coulomb
+-------------------------------------------------------------------------------
+
+1) Na tej stronie na samej dole masz program calcoul.cxx:
+http://olimp3.if.pw.edu.pl/~majanik/CERN/index.php/Femto
+
+Ten program przyjmuje dwa parametry:
+
+	a) Particle type - bo program domyślnie jest przygotowany dla pionów/kaonów. Ty potrzebujesz proton-Xi, więc nie możesz po prostu wpisać numerka odpowiadającego particle type. Musisz wejść do tego programu, do funkcji main i w kodzie pozmieniać i ustawić odpowiedni Bohr radius dla pary proton-Xi  (to jest ta wielkość, która się zmienia dla różnych typów cząstek). Bohr radius można policzyć na podstawie mas cząstek pary (to będzie po prostu liczba).
+	
+	b) Radii - to jest to co próbujemy dopasować / wyciągnąć (możesz np. numerycznie zakładać różńe wartości i sprawzać która będzie najbliżej przez chi2.
+	
+2) co z Purity?
+	Żeby przeskalować fun. teoretyczne aby odpowiadały eksperymentanym: Cpopr = 1+(C-1)*p
+	gdzie p to purity.
+	Żeby poprawić fun. eksperymentalna na purity liczymy:  Cpopr = 1+ (C-1)/p
+
+
+
+Czyli jakie kroki żeby zrobić fit?
+	1) policzyć bohr radius (ac) dla proton-xi
+		-> ac = (h*c)/(mu*c*alpha); 	mu - reduced mass, 1 GeV^(-1) = 0.197 fm
+		-> Dla ap-Xi: ac = 49.28 / 0.197327
+	2) uruchomić program calckcoul.cxx z wartością nowo policzonego bohr radius (można np. dodać nową opcję do uruchomienia programu dla proton-Xi) i jakimś losowym R (np radii = 7). 
+	3) przeskalować funkcje eksperymentalną / teorteyczną przez purity
+	(to powinno być pair purity, ale na początek może być też średnie pair purity (czyli niezależne od k*)
+	4) powtórzyć opcję 2 wielokrotnie i znaleźć taką wartość R żeby chi2 między funckją eksperymentalną a tym co wyrzuca calckoul.cxx było jak najmniejsze (najlepiej powinna tego szukać numerycznie).
+		-> kod do basha, który odpala calckcoul z różnymi wartościami R 
+		-> macro, które wczytuje te pliki w pętli, liczy chi2 i wypisuje R z najmniejszym chi2
+
