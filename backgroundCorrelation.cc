@@ -21,7 +21,7 @@ void configureHistogram(TH1* histo, Color_t markerColor, Style_t markerStyle, Si
     histo->SetMarkerColor(markerColor);
     histo->SetMarkerStyle(markerStyle);
     histo->SetMarkerSize(markerSize);
-    histo->GetXaxis()->SetRangeUser(0,1.5);
+    // histo->GetXaxis()->SetRangeUser(0,1.5);
     histo->Scale(1.0);
 }
 
@@ -102,6 +102,7 @@ std::vector<TH1F*> correlationFunctions(TFile* filename, TString directoryName, 
     TFile* f = filename;
     
     TH1::SetDefaultSumw2();
+
 
     TDirectory *Dir = (TDirectory*)f->Get(directoryName);
 

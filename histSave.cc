@@ -39,13 +39,12 @@ void SaveCorrelationHistograms(
         }
     };
 
-    // ========== correlation ==========
     out.mkdir("correlation");
     out.cd("correlation");
     writeVector(omegaCor, "omegaCor");
     writeVector(antiOmegaCor, "antiOmegaCor");
 
-    // ========== background: sum ==========
+
     if (!backgroundOmegaSum.empty() || !backgroundAntiOmegaSum.empty()) {
         out.cd(); // root
         out.mkdir("background");
@@ -56,10 +55,9 @@ void SaveCorrelationHistograms(
         writeVector(backgroundAntiOmegaSum, "backgroundAntiOmegaSum");
     }
 
-    // ========== background: high ==========
     if (!backgroundHighOmega.empty() || !backgroundHighAntiOmega.empty()) {
         out.cd(); // root
-        // upewnij sie, ze katalog background istnieje
+
         out.cd();
         out.cd("background");
         out.mkdir("background/high");
@@ -68,7 +66,6 @@ void SaveCorrelationHistograms(
         writeVector(backgroundHighAntiOmega, "backgroundHighAntiOmega");
     }
 
-    // ========== background: low ==========
     if (!backgroundLowOmega.empty() || !backgroundLowAntiOmega.empty()) {
         out.cd(); // root
         out.cd("background");
@@ -108,16 +105,13 @@ void savekStarDistributions(const char* outFileName,
     };
     std::cout << "Zapisuje histogramy k* do pliku: " << outFileName << std::endl;
 
-    // ========== correlation ==========
     out.mkdir("signal");
     out.cd("signal");
     writeVector(omegakStar, "omegakStar");
     writeVector(antiOmegakStar, "antiOmegakStar");
     std::cout << "Zapisano histogramy k* do pliku: " << outFileName << std::endl;
 
-     // ========== background: sum ==========
 
-    // ========== background: sum ==========
     if (!backgroundOmegaSum.empty() || !backgroundAntiOmegaSum.empty()) {
         out.cd(); // root
         out.mkdir("background");
@@ -129,10 +123,9 @@ void savekStarDistributions(const char* outFileName,
         std::cout << "Zapisano bkg sum k* do pliku: " << outFileName << std::endl;
     }
 
-    // ========== background: high ==========
     if (!backgroundHighOmega.empty() || !backgroundHighAntiOmega.empty()) {
         out.cd(); // root
-        // upewnij sie, ze katalog background istnieje
+ 
         out.cd();
         out.cd("background");
         out.mkdir("background/high");
@@ -141,7 +134,7 @@ void savekStarDistributions(const char* outFileName,
         writeVector(backgroundHighAntiOmega, "backgroundHighAntiOmega");
     }
 
-    // ========== background: low ==========
+
     if (!backgroundLowOmega.empty() || !backgroundLowAntiOmega.empty()) {
         out.cd(); // root
         out.cd("background");

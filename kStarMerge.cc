@@ -46,6 +46,7 @@ HistogramGroups kStarDist(TString rootFileName, bool saveHists = false){
     
 
     std::cout << "Loaded k* distributions from file: " << rootFileName << std::endl;
+    std::cout << "number of bins in kstardist: " << hists.omegaCor[0]->GetNbinsX() << std::endl;
 
     if(saveHists) {
         savekStarDistributions(
@@ -65,11 +66,13 @@ HistogramGroups kStarDist(TString rootFileName, bool saveHists = false){
 }
 
 void kStarMerge(std::vector<TString> rootFileNames, const char* outFileName){
-    std::vector<HistogramGroups> allHists;
+        std::vector<HistogramGroups> allHists;
+
     
     for(const auto& fileName : rootFileNames) {
         allHists.push_back(kStarDist(fileName, false));
     }
+
 
     std::vector<TH1F*> mergedOmegakStar;
     std::vector<TH1F*> mergedAntiOmegakStar;
@@ -97,6 +100,7 @@ void kStarMerge(std::vector<TString> rootFileNames, const char* outFileName){
 
         mergedOmegakStar.push_back(mergedOmegaCorHisto);
     }
+    std::cout << "number of bins in kstarmerged: " << mergedOmegakStar[0]->GetNbinsX() << std::endl;
 
     for(int i = 0; i < 12; i++) {
         std::vector<TH1F*> antiOmegaCorToMerge;
@@ -201,8 +205,10 @@ void mainTest(){
         "mediumDataOmegaARfull.root"
         ,"zzh_medium.root"
         ,"zzo_medium.root"
-        // ,"zzm_medium.root"
-    };
+        ,"zzm_medium.root"};
+        // , "zzi_medium.root"
+        // , "zzl_medium.root"          // bad datasets
+    // };
 
-    kStarMerge(rootFileNames, "kStarMergedNozzm.root");
+    kStarMerge(rootFileNames, "kStarMerged.root");
 }

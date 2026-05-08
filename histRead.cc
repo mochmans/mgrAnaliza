@@ -162,7 +162,7 @@ HistogramGroups loadkStarHistograms(const char* fileName)
     std::vector<TString> omegakStarNames = getNamesFromDirectory(file, "signal", "omegakStar");
     std::vector<TString> antiOmegakStarNames = getNamesFromDirectory(file, "signal", "antiOmegakStar");
 
-    std::cout << "Znalezione histogramy k*: " << std::endl;
+    // std::cout << "Znalezione histogramy k*: " << std::endl;
 
     // ===== background sum =====
     std::vector<TString> backgroundOmegaSumNames = getNamesFromDirectory(file, "background/sum", "backgroundOmegaSum");
@@ -176,7 +176,7 @@ HistogramGroups loadkStarHistograms(const char* fileName)
     std::vector<TString> backgroundLowOmegaNames = getNamesFromDirectory(file, "background/low", "backgroundLowOmega");
     std::vector<TString> backgroundLowAntiOmegaNames = getNamesFromDirectory(file, "background/low", "backgroundLowAntiOmega");
 
-    std::cout<<omegakStarNames.size() << " " << omegakStarNames[0] << std::endl;
+    // std::cout<<omegakStarNames.size() << " " << omegakStarNames[0] << std::endl;
 
     TDirectory* corDir = (TDirectory*)file->Get("signal");
     if(corDir) {    
